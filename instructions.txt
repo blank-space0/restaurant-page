@@ -1,0 +1,143 @@
+Setting up npm + Webpack from scratch
+
+Here’s a clean, correct sequence for setting up a modern front-end project:
+
+---
+
+1) Initialize npm
+Creates your package.json, which tracks all dependencies and scripts.
+
+    npm init -y
+
+---
+
+2) Install Webpack + CLI
+These are the core build tools.
+
+    npm install --save-dev webpack webpack-cli
+
+✅ --save-dev means these are needed for development only, not in production.
+
+---
+
+3) Create the project structure
+
+    mkdir src && touch src/index.js
+
+✅ All source code (JS, CSS, HTML, etc.) should go inside `src/`.
+
+---
+
+4) Install HTML plugin
+Generates the final index.html and injects your bundled JS.
+
+    npm install --save-dev html-webpack-plugin
+
+---
+
+5) Install CSS loaders
+Lets you import './styles.css' directly in JS.
+
+    npm install --save-dev style-loader css-loader
+
+---
+
+6) Install HTML loader
+Allows Webpack to handle <img src="..."> and other asset references inside HTML.
+
+    npm install --save-dev html-loader
+
+---
+
+7) Install Webpack Dev Server
+Hot-reloads your app on file changes — no need to manually rebuild.
+
+    npm install --save-dev webpack-dev-server
+
+---
+
+8) Create webpack.config.js
+
+    touch webpack.config.js
+
+Paste in the following:
+
+    const path = require("path");
+    const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+    module.exports = {
+      mode: "development",
+      entry: "./src/index.js",
+      output: {
+        filename: "main.js",
+        path: path.resolve(__dirname, "dist"),
+        clean: true,
+      },
+      devtool: "eval-source-map",
+      devServer: {
+        watchFiles: ["./src/template.html"],
+      },
+      plugins: [
+        new HtmlWebpackPlugin({
+          template: "./src/template.html",
+        }),
+      ],
+      module: {
+        rules: [
+          {
+            test: /\.css$/i,
+            use: ["style-loader", "css-loader"],
+          },
+          {
+            test: /\.html$/i,
+            loader: "html-loader",
+          },
+          {
+            test: /\.(png|svg|jpg|jpeg|gif)$/i,
+            type: "asset/resource",
+          },
+        ],
+      },
+    };
+
+---
+
+9) Create your template HTML file
+
+    touch src/template.html
+
+Basic example content:
+
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <title>Webpack Setup</title>
+      </head>
+      <body>
+        <h1>Hello Webpack</h1>
+      </body>
+    </html>
+
+---
+
+10) Run the project
+
+Build once (static build):
+
+    npx webpack
+
+Start dev server (live reload):
+
+    npx webpack serve
+
+---
+
+✅ TL;DR Key Points
+
+- npm = installs all tools
+- webpack = bundles code
+- webpack-dev-server = live reload
+- html-webpack-plugin = injects bundled JS into HTML
+- style-loader, css-loader = allow CSS imports
+- html-loader = processes <img src="..."> in HTML
